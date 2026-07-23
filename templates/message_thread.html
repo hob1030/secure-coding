@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{{ other.username }}와의 대화{% endblock %}
+{% block content %}
+<h2>{{ other.username }}와의 대화</h2>
+<div>
+{% for item in thread %}
+<div class="card"><strong>{{ item.sender_name }}</strong>: {{ item.content }}<br><small>{{ item.created_at }}</small></div>
+{% else %}<p>아직 메시지가 없습니다.</p>{% endfor %}
+</div>
+<form method="post">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+    <textarea name="content" minlength="1" maxlength="500" required></textarea>
+    <button class="ok" type="submit">전송</button>
+</form>
+{% endblock %}

@@ -3,8 +3,11 @@
 {% block content %}
 <h2>로그인</h2>
 <form method="post">
-  사용자명: <input type="text" name="username" required><br>
-  비밀번호: <input type="password" name="password" required><br>
-  <button type="submit">로그인</button>
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+    <label>아이디</label>
+    <input name="username" required>
+    <label>비밀번호</label>
+    <input type="password" name="password" required>
+    <button class="ok" type="submit">로그인</button>
 </form>
 {% endblock %}

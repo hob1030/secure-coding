@@ -1,8 +1,20 @@
 {% extends "base.html" %}
-{% block title %}상품 상세보기{% endblock %}
+{% block title %}상품 상세{% endblock %}
 {% block content %}
 <h2>{{ product.title }}</h2>
+{% if product.image_url %}<img class="product" src="{{ product.image_url }}" alt="상품 이미지">{% endif %}
 <p>{{ product.description }}</p>
-<p>가격: {{ product.price }}</p>
-<p>판매자: {{ seller.username if seller else '알 수 없음' }}</p>
+<p>가격: {{ product.price }}원</p>
+<p>판매자: {{ product.seller_name }}</p>
+{% if current_user %}
+<p><a href="{{ url_for('message_thread', username=product.seller_name) }}">판매자에게 1대1 메시지</a></p>
+<p><a href="{{ url_for('report', type='product', target=product.id) }}">이 상품 신고</a></p>
+{% endif %}
+{% if can_manage %}
+<p><a href="{{ url_for('edit_product', product_id=product.id) }}">상품 수정</a></p>
+<form method="post" action="{{ url_for('delete_product', product_id=product.id) }}" onsubmit="return confirm('삭제하시겠습니까?')">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+    <button class="danger" type="submit">상품 삭제</button>
+</form>
+{% endif %}
 {% endblock %}

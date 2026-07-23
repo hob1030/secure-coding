@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}관리자{% endblock %}
+{% block content %}
+<h2>관리자 페이지</h2>
+<h3>사용자 관리</h3>
+<table><tr><th>아이디</th><th>잔액</th><th>신고</th><th>상태</th><th>관리</th></tr>
+{% for user in users %}<tr><td>{{ user.username }}{% if user.is_admin %} (관리자){% endif %}</td><td>{{ user.balance }}</td><td>{{ user.report_count }}</td><td>{{ '활성' if user.is_active else '차단' }}</td><td>
+<form method="post" action="{{ url_for('admin_toggle_user', user_id=user.id) }}">
+<input type="hidden" name="_csrf_token" value="{{ csrf_token }}"><button type="submit" {% if user.is_admin %}disabled{% endif %}>차단/해제</button></form>
+</td></tr>{% endfor %}</table>
+
+<h3>상품 관리</h3>
+<table><tr><th>상품</th><th>판매자</th><th>신고</th><th>상태</th><th>관리</th></tr>
+{% for product in products %}<tr><td>{{ product.title }}</td><td>{{ product.seller_name }}</td><td>{{ product.report_count }}</td><td>{{ '차단' if product.is_blocked else '공개' }}</td><td>
+<form method="post" action="{{ url_for('admin_toggle_product', product_id=product.id) }}">
+<input type="hidden" name="_csrf_token" value="{{ csrf_token }}"><button type="submit">차단/해제</button></form>
+</td></tr>{% endfor %}</table>
+
+<h3>신고 기록</h3>
+<table><tr><th>신고자</th><th>종류</th><th>대상 ID</th><th>사유</th><th>시간</th><th>관리</th></tr>
+{% for report in reports %}<tr><td>{{ report.reporter_name }}</td><td>{{ report.target_type }}</td><td>{{ report.target_id }}</td><td>{{ report.reason }}</td><td>{{ report.created_at }}</td><td>
+<form method="post" action="{{ url_for('admin_delete_report', report_id=report.id) }}">
+<input type="hidden" name="_csrf_token" value="{{ csrf_token }}"><button type="submit">기록 삭제</button></form>
+</td></tr>{% else %}<tr><td colspan="6">신고 기록이 없습니다.</td></tr>{% endfor %}</table>
+{% endblock %}

@@ -1,11 +1,19 @@
 {% extends "base.html" %}
-{% block title %}신고하기{% endblock %}
+{% block title %}신고{% endblock %}
 {% block content %}
 <h2>신고하기</h2>
+<p>같은 대상은 한 계정당 한 번만 신고할 수 있으며, 서로 다른 3개 계정의 신고가 누적되면 자동 차단됩니다.</p>
 <form method="post">
-  신고 대상 (사용자ID 또는 상품ID): <input type="text" name="target_id" required><br>
-  신고 사유: <br>
-  <textarea name="reason" rows="4" cols="50" required></textarea><br>
-  <button type="submit">신고 접수</button>
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+    <label>신고 대상 종류</label>
+    <select name="target_type" required>
+        <option value="user" {% if preset_type == 'user' %}selected{% endif %}>사용자</option>
+        <option value="product" {% if preset_type == 'product' %}selected{% endif %}>상품</option>
+    </select>
+    <label>대상 아이디</label>
+    <input name="target_id" value="{{ preset_target }}" required placeholder="사용자명 또는 상품 ID">
+    <label>신고 사유</label>
+    <textarea name="reason" minlength="5" maxlength="500" required></textarea>
+    <button class="danger" type="submit">신고 접수</button>
 </form>
 {% endblock %}

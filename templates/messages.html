@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}1대1 메시지{% endblock %}
+{% block content %}
+<h2>1대1 메시지</h2>
+<h3>대화할 사용자</h3>
+<ul>{% for user in users %}<li><a href="{{ url_for('message_thread', username=user.username) }}">{{ user.username }}</a></li>{% else %}<li>대화 가능한 사용자가 없습니다.</li>{% endfor %}</ul>
+<h3>최근 메시지</h3>
+<ul>
+{% for item in recent %}
+<li>{% if item.sender_id == current_user.id %}보낸 메시지 → {{ item.receiver_name }}{% else %}받은 메시지 ← {{ item.sender_name }}{% endif %}: {{ item.content }} ({{ item.created_at }})</li>
+{% else %}<li>메시지가 없습니다.</li>{% endfor %}
+</ul>
+{% endblock %}
