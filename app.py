@@ -161,6 +161,7 @@ def logout():
 
 
 # 대시보드: 사용자 정보와 전체 상품 리스트 표시
+# 대시보드: 사용자 정보, 상품 목록 및 상품 검색
 @app.route('/dashboard')
 def dashboard():
     if 'user_id' not in session:
@@ -174,20 +175,36 @@ def dashboard():
         "SELECT * FROM user WHERE id = ?",
         (session['user_id'],)
     )
-
     current_user = cursor.fetchone()
 
-    # 모든 상품 조회
-    cursor.execute("SELECT * FROM product")
+    # 주소의 q 값을 검색어로 가져오기
+    query = request.args.get('q', '').strip()
+
+    if query:
+        # 검색어가 있으면 상품명 또는 상품 설명에서 검색
+        search_value = f'%{query}%'
+
+        cursor.execute(
+            """
+            SELECT *
+            FROM product
+            WHERE title LIKE ?
+               OR description LIKE ?
+            """,
+            (search_value, search_value)
+        )
+    else:
+        # 검색어가 없으면 전체 상품 조회
+        cursor.execute("SELECT * FROM product")
+
     all_products = cursor.fetchall()
 
     return render_template(
         'dashboard.html',
         products=all_products,
-        user=current_user
+        user=current_user,
+        query=query
     )
-
-
 # 프로필 페이지: bio 업데이트 가능
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
